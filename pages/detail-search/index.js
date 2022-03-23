@@ -1,5 +1,8 @@
 // pages/detail-search/index.js
 import {getSearchHot, getSearchSuggest} from "../../service/api_search";
+import debounce from '../../utils/debounce';
+
+const debounceGetSearchSuggest = debounce(getSearchSuggest,300);
 
 Page({
 
@@ -29,60 +32,12 @@ Page({
         const searchValue = event.detail;
         this.setData({searchValue: searchValue})
         if(searchValue){
-            getSearchSuggest(searchValue).then(res => {
+            debounceGetSearchSuggest(searchValue).then(res => {
                 this.setData({suggestSongs: res.result.allMatch})
             });
         }else{
             this.setData({suggestSongs: []})
         }
     },
-
-    /**
-     * 生命周期函数--监听页面初次渲染完成
-     */
-    onReady: function () {
-
-    },
-
-    /**
-     * 生命周期函数--监听页面显示
-     */
-    onShow: function () {
-
-    },
-
-    /**
-     * 生命周期函数--监听页面隐藏
-     */
-    onHide: function () {
-
-    },
-
-    /**
-     * 生命周期函数--监听页面卸载
-     */
-    onUnload: function () {
-
-    },
-
-    /**
-     * 页面相关事件处理函数--监听用户下拉动作
-     */
-    onPullDownRefresh: function () {
-
-    },
-
-    /**
-     * 页面上拉触底事件的处理函数
-     */
-    onReachBottom: function () {
-
-    },
-
-    /**
-     * 用户点击右上角分享
-     */
-    onShareAppMessage: function () {
-
-    }
+    onUnload: function() {}
 })
