@@ -18,10 +18,11 @@
 <view class="suggest" wx:elif="{{ searchValue.length }}">
   <view class="title">搜索"{{searchValue}}"</view>
   <view class="list">
-    <block wx:for="{{suggestSongs}}" wx:key="keyword">
+    <block wx:for="{{nodes}}" wx:key="keyword">
       <view class="item">
         <image src="/assets/images/icons/search_icon.png" class="icon" mode="widthFix"></image>
-        <text class="text">{{item.keyword}}</text>
+        <!-- <text class="text">{{item.keyword}}</text> -->
+        <rich-text nodes="{{item}}"></rich-text>
       </view>
     </block>
   </view>
