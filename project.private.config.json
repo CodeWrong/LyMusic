@@ -1,0 +1,46 @@
+{
+    "setting": {},
+    "condition": {
+        "plugin": {
+            "list": []
+        },
+        "game": {
+            "list": []
+        },
+        "gamePlugin": {
+            "list": []
+        },
+        "miniprogram": {
+            "list": [
+                {
+                    "name": "detail-video",
+                    "pathName": "pages/detail-video/index",
+                    "query": "id=14487937",
+                    "launchMode": "default",
+                    "scene": null
+                },
+                {
+                    "name": "音乐首页",
+                    "pathName": "pages/home-music/index",
+                    "query": "",
+                    "launchMode": "default",
+                    "scene": null
+                },
+                {
+                    "name": "detail-song",
+                    "pathName": "pages/detail-songs/index",
+                    "query": "id=7044174061&type=menu",
+                    "launchMode": "default",
+                    "scene": null
+                },
+                {
+                    "name": "search-detail",
+                    "pathName": "pages/detail-search/index",
+                    "query": "",
+                    "scene": null,
+                    "launchMode": "default"
+                }
+            ]
+        }
+    }
+}
