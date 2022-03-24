@@ -39,6 +39,7 @@ Page({
                 this.setData({suggestSongs})
 
                 // 转为nodes节点
+                if(suggestSongs) {return} 
                 const suggestKeywords = suggestSongs.map(item => item.keyword);
                 const suggestNodes = []
                 for(const keyword of suggestKeywords){
@@ -48,8 +49,8 @@ Page({
                 this.setData({nodes: suggestNodes})
             });
         }else{
-            this.setData({suggestSongs: []})
-            this.setData({resultSongs: []})
+            this.setData({suggestSongs: [], resultSongs: []})
+            debounceGetSearchSuggest.cancel();
         }
     },
     handleSearchAction(){
