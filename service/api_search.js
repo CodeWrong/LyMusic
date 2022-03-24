@@ -11,3 +11,9 @@ export function getSearchSuggest(keywords){
         type: "mobile"
     })
 }
+
+export function getSearchResult(keywords) {
+    return lyRequest.get("/search",{
+        keywords
+    })
+}

@@ -1,5 +1,5 @@
 // pages/detail-search/index.js
-import {getSearchHot, getSearchSuggest} from "../../service/api_search";
+import {getSearchHot, getSearchSuggest,getSearchResult} from "../../service/api_search";
 import debounce from '../../utils/debounce';
 import {stringToNodes} from '../../utils/string2nodes'
 
@@ -13,7 +13,8 @@ Page({
         hotKeyWords: [],
         suggestSongs: [],
         searchValue: '',
-        nodes: []
+        nodes: [],
+        resultSongs: []
     },
 
     /**
@@ -48,7 +49,19 @@ Page({
             });
         }else{
             this.setData({suggestSongs: []})
+            this.setData({resultSongs: []})
         }
+    },
+    handleSearchAction(){
+        const searchValue = this.data.searchValue;
+        getSearchResult(searchValue).then(res => {
+            this.setData({resultSongs: res.result.songs})
+        })
+    },
+    handleKeywordItemClick(event){
+        const keyword = event.currentTarget.dataset.keyword;
+        this.setData({searchValue: keyword});
+        this.handleSearchAction();
     },
     onUnload: function() {}
 })

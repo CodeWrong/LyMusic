@@ -5,7 +5,7 @@ export function stringToNodes(keyword,value) {
         const node1 = {
             name: 'span',
             attrs: {
-                style: "color: #26ce8a"
+                style: "color: #26ce8a; font-size: 14px"
             },
             children: [
                 {
@@ -19,7 +19,7 @@ export function stringToNodes(keyword,value) {
         const node2 = {
             name: 'span',
             attrs: {
-                style: "color: black"
+                style: "color: black; font-size: 14px"
             },
             children: [
                 {
@@ -33,7 +33,7 @@ export function stringToNodes(keyword,value) {
         const node1 = {
             name: 'span',
             attrs: {
-                style: "color: #000"
+                style: "color: #000;font-size: 14px"
             },
             children: [
                 {
