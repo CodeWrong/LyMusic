@@ -29,8 +29,18 @@ Page({
         const screenHeight = globalData.screenHeight;
         const statusBarHeight = globalData.statusBarHeight;
         const navBarHeight = globalData.navBarHeight;
-        const contentHeight = screenHeight - statusBarHeight - 44;
+        const contentHeight = screenHeight - statusBarHeight - navBarHeight;
         this.setData({contentHeight})
+
+        // 创建音乐播放器
+        const audioContext = wx.createInnerAudioContext();
+        audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`
+
+        // 第一种调用方法
+        // audioContext.play();
+
+        // 第二种调用方式
+        // audioContext.autoplay = true;
     },
 
     getPageData: function(id) {
