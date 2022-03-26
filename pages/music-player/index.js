@@ -10,7 +10,10 @@ Page({
         currentSong: {},
 
         currentPage: 0,
-        contentHeight: 0
+        contentHeight: 0,
+
+        // 是否显示歌词
+        isMusicLyric: true
     },
 
     /**
@@ -29,8 +32,11 @@ Page({
         const screenHeight = globalData.screenHeight;
         const statusBarHeight = globalData.statusBarHeight;
         const navBarHeight = globalData.navBarHeight;
+        const deviceRadio = globalData.deviceRadio;
         const contentHeight = screenHeight - statusBarHeight - navBarHeight;
-        this.setData({contentHeight})
+        this.setData({contentHeight});
+        this.setData({isMusicLyric: deviceRadio >= 2});
+
 
         // 创建音乐播放器
         const audioContext = wx.createInnerAudioContext();
