@@ -1,6 +1,7 @@
 // pages/music-player/index.js
-import {getSongDetail} from '../../service/api_player';
+import {getSongDetail, getSongLyric} from '../../service/api_player';
 import {audioContext} from '../../store/index'
+import {parseLyric} from '../../utils/parse-lyric';
 
 
 Page({
@@ -11,13 +12,14 @@ Page({
     data: {
         id: 0,
         currentSong: {},
-
         currentPage: 0,
         contentHeight: 0,
+        lyricInfos: [],
+        currentLyricText: '',
+        currentLyricIndex: 0,
 
         // 是否显示歌词
         isMusicLyric: true,
-
         currentTime:0,
         durationTime: 0,
         sliderValue: 0,
@@ -51,15 +53,30 @@ Page({
         audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
         // audioContext.autoplay = true;
 
+        this.setupAudioContextListener();
+    },
+    setupAudioContextListener(){
         audioContext.onCanplay(() => {
             // audioContext.play();
         })
 
         audioContext.onTimeUpdate(() => {
+            const currentTime = audioContext.currentTime * 1000;
             if(!this.data.isSliderChanging){
-                const currentTime = audioContext.currentTime * 1000;
                 const value = currentTime / this.data.durationTime * 100
                 this.setData({currentTime,sliderValue: value})
+            }
+            let i = 0
+            for(; i < this.data.lyricInfos.length;i++){
+                const lyricInfo = this.data.lyricInfos[i];
+                if(currentTime < lyricInfo.time){
+                    break;
+                }
+            }
+            const currentIndex = i - 1;
+            if(this.data.currentLyricIndex !== currentIndex){
+                const currentLyricInfo = this.data.lyricInfos[currentIndex];
+                this.setData({currentLyricText: currentLyricInfo.lyricText,currentLyricIndex: currentIndex})
             }
         })
     },
@@ -67,6 +84,12 @@ Page({
     getPageData: function(id) {
         getSongDetail(id).then(res => {
             this.setData({currentSong: res.songs[0], durationTime: res.songs[0].dt})
+        })
+
+        getSongLyric(id).then(res => {
+            const lyricString = res.lrc.lyric;
+            const lyrics = parseLyric(lyricString);
+            this.setData({lyricInfos: lyrics})
         })
     },
 
@@ -91,7 +114,7 @@ Page({
     handleSliderChanging(event){
         const value = event.detail.value;
         const currentTime = this.data.durationTime * value / 100;
-        this.setData({isSliderChanging: true, currentTime})
+        this.setData({isSliderChanging: true, currentTime, sliderValue: value})
     },
 
     /**
