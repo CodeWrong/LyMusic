@@ -1,14 +1,8 @@
 // pages/music-player/index.js
 import {
-    getSongDetail,
-    getSongLyric
-} from '../../service/api_player';
-import {
-    audioContext
+    audioContext,
+    playerStore
 } from '../../store/index'
-import {
-    parseLyric
-} from '../../utils/parse-lyric';
 
 
 Page({
@@ -43,8 +37,8 @@ Page({
         this.setData({
             id
         })
-        // 根据id获取歌曲信息
-        this.getPageData(id)
+        
+        this.setupPlayerStoreListener()
 
         // 动态计算内容高度
         const globalData = getApp().globalData;
@@ -62,12 +56,28 @@ Page({
         });
 
 
-        // 使用音乐播放器
-        audioContext.stop();
-        audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
-        // audioContext.autoplay = true;
 
         this.setupAudioContextListener();
+    },
+    handleBackClick(){
+        wx.navigateBack()
+    },
+    setupPlayerStoreListener(){
+        playerStore.onStates(["currentSong","durationTime","lyricInfos"], ({
+            currentSong,
+            durationTime,
+            lyricInfos
+        }) => {
+            if(lyricInfos){
+                this.setData({lyricInfos})
+            }
+            if(currentSong){
+                this.setData({currentSong})
+            }
+            if(durationTime){
+                this.setData({durationTime})
+            }
+        })
     },
     setupAudioContextListener() {
         audioContext.onCanplay(() => {
@@ -83,6 +93,7 @@ Page({
                     sliderValue: value
                 })
             }
+            if(!this.data.lyricInfos) return
             let i = 0
             for (; i < this.data.lyricInfos.length; i++) {
                 const lyricInfo = this.data.lyricInfos[i];
@@ -99,23 +110,6 @@ Page({
                     lyricScrollTop: currentIndex * 35
                 })
             }
-        })
-    },
-
-    getPageData: function (id) {
-        getSongDetail(id).then(res => {
-            this.setData({
-                currentSong: res.songs[0],
-                durationTime: res.songs[0].dt
-            })
-        })
-
-        getSongLyric(id).then(res => {
-            const lyricString = res.lrc.lyric;
-            const lyrics = parseLyric(lyricString);
-            this.setData({
-                lyricInfos: lyrics
-            })
         })
     },
 

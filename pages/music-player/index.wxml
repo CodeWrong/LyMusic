@@ -5,7 +5,7 @@
 <view class="bg-cover"></view>
 
 <!-- 导航栏 -->
-<nav-bar>
+<nav-bar bind:leftClick="handleBackClick">
     <view class="tab" slot="title">
         <view class="{{currentPage === 0 ? 'active' : ''}}">歌曲</view>
         <view class="divider"> | </view>
@@ -25,7 +25,7 @@
             <view class="title">{{currentSong.name}}</view>
             <view class="subtitle">
                 <view class="singer">{{currentSong.ar[0].name}}</view>
-                <view class="alias">专辑: {{currentSong.alia[0]}}</view>
+                <view class="alias" wx:if="{{currentSong.alia[0]}}">专辑: {{currentSong.alia[0]}}</view>
             </view>
         </view>
         <view class="lyric" wx:if="{{isMusicLyric}}">{{currentLyricText}}</view>
