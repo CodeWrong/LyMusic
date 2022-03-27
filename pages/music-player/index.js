@@ -4,7 +4,7 @@ import {
     playerStore
 } from '../../store/index'
 
-
+const playModeNames = ["order","repeat","random"]
 Page({
 
     /**
@@ -18,14 +18,21 @@ Page({
         lyricInfos: [],
         currentLyricText: '',
         currentLyricIndex: 0,
+        currentTime: 0,
 
         // 是否显示歌词
         isMusicLyric: true,
-        currentTime: 0,
+        
         durationTime: 0,
         sliderValue: 0,
         isSliderChanging: false,
-        lyricScrollTop: 0
+        lyricScrollTop: 0,
+
+        playModeIndex: 0,
+        playModeName: 'order',
+
+        isPlaying: false,
+        playingName: 'pause'
     },
 
     /**
@@ -57,10 +64,18 @@ Page({
 
 
 
-        this.setupAudioContextListener();
+        // this.setupAudioContextListener();
     },
     handleBackClick(){
         wx.navigateBack()
+    },
+    handleModeClick(){
+        let playModeIndex = this.data.playModeIndex + 1;
+        if(playModeIndex === 3){playModeIndex = 0};
+        playerStore.setState("playModeIndex",playModeIndex)
+    },
+    handlePlayingClick(){
+        playerStore.dispatch("changeIsPlaying")
     },
     setupPlayerStoreListener(){
         playerStore.onStates(["currentSong","durationTime","lyricInfos"], ({
@@ -78,40 +93,71 @@ Page({
                 this.setData({durationTime})
             }
         })
-    },
-    setupAudioContextListener() {
-        audioContext.onCanplay(() => {
-            // audioContext.play();
-        })
 
-        audioContext.onTimeUpdate(() => {
-            const currentTime = audioContext.currentTime * 1000;
-            if (!this.data.isSliderChanging) {
+        playerStore.onStates(["currentTime","currentLyricText","currentLyricIndex"],({
+            currentTime,
+            currentLyricIndex,
+            currentLyricText
+        }) => {
+            if(currentTime && !this.data.isSliderChanging){
                 const value = currentTime / this.data.durationTime * 100
                 this.setData({
                     currentTime,
                     sliderValue: value
                 })
             }
-            if(!this.data.lyricInfos) return
-            let i = 0
-            for (; i < this.data.lyricInfos.length; i++) {
-                const lyricInfo = this.data.lyricInfos[i];
-                if (currentTime < lyricInfo.time) {
-                    break;
-                }
+            if(currentLyricText){
+                this.setData({currentLyricText})
             }
-            const currentIndex = i - 1;
-            if (this.data.currentLyricIndex !== currentIndex) {
-                const currentLyricInfo = this.data.lyricInfos[currentIndex];
+            if(currentLyricIndex){
                 this.setData({
-                    currentLyricText: currentLyricInfo.lyricText,
-                    currentLyricIndex: currentIndex,
-                    lyricScrollTop: currentIndex * 35
+                    currentLyricIndex,
+                    lyricScrollTop: currentLyricIndex * 35
                 })
             }
         })
+
+        playerStore.onState("playModeIndex",(playModeIndex) => {
+            this.setData({playModeIndex,playModeName: playModeNames[playModeIndex]})
+        })
+
+        playerStore.onState("isPlaying",(isPlaying) => {
+            this.setData({isPlaying,playingName: isPlaying ? 'pause' : 'resume'})
+        })
     },
+    // setupAudioContextListener() {
+    //     audioContext.onCanplay(() => {
+    //         // audioContext.play();
+    //     })
+
+    //     audioContext.onTimeUpdate(() => {
+    //         const currentTime = audioContext.currentTime * 1000;
+    //         if (!this.data.isSliderChanging) {
+    //             const value = currentTime / this.data.durationTime * 100
+    //             this.setData({
+    //                 currentTime,
+    //                 sliderValue: value
+    //             })
+    //         }
+    //         if(!this.data.lyricInfos) return
+    //         let i = 0
+    //         for (; i < this.data.lyricInfos.length; i++) {
+    //             const lyricInfo = this.data.lyricInfos[i];
+    //             if (currentTime < lyricInfo.time) {
+    //                 break;
+    //             }
+    //         }
+    //         const currentIndex = i - 1;
+    //         if (this.data.currentLyricIndex !== currentIndex) {
+    //             const currentLyricInfo = this.data.lyricInfos[currentIndex];
+    //             this.setData({
+    //                 currentLyricText: currentLyricInfo.lyricText,
+    //                 currentLyricIndex: currentIndex,
+    //                 lyricScrollTop: currentIndex * 35
+    //             })
+    //         }
+    //     })
+    // },
 
     // 事件处理
     handleSwiperChange: function (event) {
@@ -128,6 +174,7 @@ Page({
         const currentTime = this.data.durationTime * value / 100;
 
         audioContext.pause();
+        playerStore.setState("isPlaying",true)
         audioContext.seek(currentTime / 1000);
 
         this.setData({
