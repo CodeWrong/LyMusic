@@ -14,7 +14,8 @@ Page({
       recommendSongs: [],
       hotSongMenu: [],
       recommendSongMenu: [],
-      rankings: {0: {}, 2: {}, 3: {}}
+      rankings: {0: {}, 2: {}, 3: {}},
+      currentSong: {}
     },
 
     // 事件处理
@@ -56,6 +57,10 @@ Page({
         this.setData({recommendSongMenu: res.playlists})
       })
 
+      playerStore.dispatch("playMusicWithSongIdAction",{id: 1901371647})
+
+      this.setupPlayerStoreListener();
+
       rankingStore.dispatch('getRankingDataAction')
 
       rankingStore.onState('hotRanking', (res) => {
@@ -68,6 +73,11 @@ Page({
       rankingStore.onState("newRanking",this.getRankingHandler(0))
       rankingStore.onState("originRanking",this.getRankingHandler(2))
       rankingStore.onState("upRanking",this.getRankingHandler(3))
+    },
+    setupPlayerStoreListener(){
+        playerStore.onState("currentSong",(currentSong) => {
+          this.setData({currentSong})
+        })
     },
 
     getRankingHandler(idx){
