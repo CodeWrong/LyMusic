@@ -12,6 +12,8 @@ const audioContext = wx.createInnerAudioContext();
 
 const playerStore = new HYEventStore({
     state: {
+        isFirstPlay: true,
+
         id:'',
         currentSong: {},
         durationTime: 0,
@@ -41,7 +43,6 @@ const playerStore = new HYEventStore({
             ctx.currentLyricText = '';
             ctx.currentLyricIndex = 0;
             ctx.currentTime = 0;
-            ctx.playModeIndex = 0;
 
 
             getSongDetail(id).then(res => {
@@ -57,8 +58,11 @@ const playerStore = new HYEventStore({
 
             audioContext.stop();
             audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
-            // audioContext.autoplay = true;
-            this.dispatch("setupAudioContextListenerAction")
+            audioContext.autoplay = true;
+            if(ctx.isFirstPlay){
+                this.dispatch("setupAudioContextListenerAction")
+                ctx.isFirstPlay = false;
+            }
         },
 
         setupAudioContextListenerAction: function(ctx){
@@ -85,6 +89,10 @@ const playerStore = new HYEventStore({
                     ctx.currentLyricText = currentLyricInfo.lyricText;
                     ctx.currentLyricIndex = currentIndex
                 }
+            })
+
+            audioContext.onEnded(() => {
+                this.dispatch("changeNewMusicAction")
             })
         },
 
