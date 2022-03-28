@@ -51,7 +51,8 @@
 </view>
 
 <!-- 播放栏 -->
-<view class="play-bar" wx:if="{{currentSong.id}}">
+<view class="play-bar-placeholder" wx:if="{{currentSong.id}}"></view>
+<view class="play-bar" wx:if="{{currentSong.id}}" bindtap="handlePlayBarClick">
     <view class="left">
         <image src="{{currentSong.al.picUrl}}" mode="aspectFill" class="album album-anim" 
         style="animation-play-state: {{playAnimState}};"></image>
@@ -60,7 +61,7 @@
     <view class="right">
         <image class="icon play" 
         src="/assets/images/music/{{isPlaying ? 'pause':'play'}}_icon.png"
-        bindtap="handlePlatBtnClick"></image>
+        catchtap="handlePlatBtnClick"></image>
         <image class="icon playlist" src="/assets/images/music/playlist_icon.png"></image>
     </view>
 </view>

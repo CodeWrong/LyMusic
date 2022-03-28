@@ -102,8 +102,14 @@ Page({
       }
     },
 
-    handlePlatBtnClick(){
+    handlePlatBtnClick(event){
       playerStore.dispatch("changeIsPlaying", !this.data.isPlaying)
+    },
+
+    handlePlayBarClick(){
+      wx.navigateTo({
+        url: '/pages/music-player/index',
+      })
     },
 
     // getNewRankingHandler: function(res){
