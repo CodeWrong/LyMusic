@@ -68,3 +68,16 @@ page{
     height: 25px;
     margin-right: 10rpx;
 }
+
+@keyframes albumRotate{
+    from {
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+.album-anim{
+    animation: albumRotate 16s linear infinite;
+}
