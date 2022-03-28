@@ -1,5 +1,5 @@
 // pages/home-music/index.js
-import {rankingStore, rankingMap} from '../../store/index'
+import {rankingStore, rankingMap,playerStore} from '../../store/index'
 
 import {getBanner, getSongMenu} from '../../service/api_music';
 import querySelector from '../../utils/query-rect';
@@ -29,6 +29,11 @@ Page({
       querySelector(".swiper-image").then(res => {
         this.setData({swiperHeight: res[0].height})
       })
+    },
+    handleSongItemClick(event){
+      const index = event.currentTarget.dataset.index;
+      playerStore.setState("currentPlayIndex",index);
+      playerStore.setState("currentPlayList", this.data.recommendSongs);
     },
 
     /**

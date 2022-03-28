@@ -12,6 +12,7 @@ const audioContext = wx.createInnerAudioContext();
 
 const playerStore = new HYEventStore({
     state: {
+        id:'',
         currentSong: {},
         durationTime: 0,
         lyricInfos: [],
@@ -21,11 +22,28 @@ const playerStore = new HYEventStore({
         currentTime: 0,
 
         playModeIndex: 0, // 0: 顺序 , 1: 单曲 , 2: 随机
-        isPlaying: false
+        isPlaying: false,
+        currentPlayList: [],
+        currentPlayIndex: 0
     },
     actions: {
         playMusicWithSongIdAction(ctx,{id}){
+            if(ctx.id === id) {
+                this.dispatch("changeIsPlaying",true);
+                return;
+            }
+            ctx.id = id;
+
             ctx.isPlaying = true;
+            ctx.currentSong = {};
+            ctx.durationTime = 0;
+            ctx.lyricInfos = [];
+            ctx.currentLyricText = '';
+            ctx.currentLyricIndex = 0;
+            ctx.currentTime = 0;
+            ctx.playModeIndex = 0;
+
+
             getSongDetail(id).then(res => {
                 ctx.currentSong = res.songs[0];
                 ctx.durationTime = res.songs[0].dt;
@@ -70,13 +88,37 @@ const playerStore = new HYEventStore({
             })
         },
 
-        changeIsPlaying(ctx){
-            ctx.isPlaying = !ctx.isPlaying;
+        changeIsPlaying(ctx, isPlaying=true){
+            ctx.isPlaying = isPlaying;
             if(ctx.isPlaying){
                 audioContext.play();
             }else{
                 audioContext.pause()
             }
+        },
+
+        changeNewMusicAction(ctx, isNext = true){
+            let index = ctx.currentPlayIndex;
+            switch(ctx.playModeIndex){
+                case 0:
+                    index = isNext ? index +=1 : index -=1;
+                    if(index === ctx.currentPlayList.length) {index = 0;}
+                    if(index == -1) {index = ctx.currentPlayList.length - 1;}
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    index = Math.floor(Math.random() * ctx.currentPlayList.length);
+                    break;
+            }
+            let currentSong = ctx.currentPlayList[index];
+            if(!currentSong){
+                currentSong = ctx.currentSong;
+            }else{
+                ctx.currentPlayIndex = index;
+            }
+
+            this.dispatch("playMusicWithSongIdAction",{id: currentSong.id})
         }
     }
 })

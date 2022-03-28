@@ -61,13 +61,15 @@ Page({
         this.setData({
             isMusicLyric: deviceRadio >= 2
         });
-
-
-
-        // this.setupAudioContextListener();
     },
     handleBackClick(){
         wx.navigateBack()
+    },
+    handlePrevBtnClick(){
+        playerStore.dispatch("changeNewMusicAction",false)
+    },
+    handleNextBtnClick(){
+        playerStore.dispatch("changeNewMusicAction");
     },
     handleModeClick(){
         let playModeIndex = this.data.playModeIndex + 1;
@@ -75,7 +77,7 @@ Page({
         playerStore.setState("playModeIndex",playModeIndex)
     },
     handlePlayingClick(){
-        playerStore.dispatch("changeIsPlaying")
+        playerStore.dispatch("changeIsPlaying",!this.data.isPlaying)
     },
     setupPlayerStoreListener(){
         playerStore.onStates(["currentSong","durationTime","lyricInfos"], ({
@@ -174,7 +176,7 @@ Page({
         const currentTime = this.data.durationTime * value / 100;
 
         audioContext.pause();
-        playerStore.setState("isPlaying",true)
+        playerStore.setState("isPlaying",true);
         audioContext.seek(currentTime / 1000);
 
         this.setData({

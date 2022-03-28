@@ -39,7 +39,7 @@ Page({
                 this.setData({suggestSongs})
 
                 // 转为nodes节点
-                if(suggestSongs) {return} 
+                if(!suggestSongs) {return} 
                 const suggestKeywords = suggestSongs.map(item => item.keyword);
                 const suggestNodes = []
                 for(const keyword of suggestKeywords){
