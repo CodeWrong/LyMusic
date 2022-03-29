@@ -175,7 +175,7 @@ Page({
 
         const currentTime = this.data.durationTime * value / 100;
 
-        audioContext.pause();
+        // audioContext.pause();
         playerStore.setState("isPlaying",true);
         audioContext.seek(currentTime / 1000);
 
