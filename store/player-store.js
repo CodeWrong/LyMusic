@@ -7,7 +7,8 @@ import {
     parseLyric
 } from '../utils/parse-lyric';
 
-const audioContext = wx.createInnerAudioContext();
+// const audioContext = wx.createInnerAudioContext();
+const audioContext =wx.getBackgroundAudioManager();
 
 
 const playerStore = new HYEventStore({
@@ -48,6 +49,7 @@ const playerStore = new HYEventStore({
             getSongDetail(id).then(res => {
                 ctx.currentSong = res.songs[0];
                 ctx.durationTime = res.songs[0].dt;
+                audioContext.title = res.songs[0].name
             })
     
             getSongLyric(id).then(res => {
@@ -58,6 +60,7 @@ const playerStore = new HYEventStore({
 
             audioContext.stop();
             audioContext.src = `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
+            audioContext.title = id;
             audioContext.autoplay = true;
             if(ctx.isFirstPlay){
                 this.dispatch("setupAudioContextListenerAction")
